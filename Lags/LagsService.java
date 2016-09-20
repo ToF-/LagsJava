@@ -1,5 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.io.IOException;
+import java.util.Collections;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.StandardOpenOption;
 
 class LagsService {
         private List<Ordre> listOrdre = new ArrayList<Ordre>();
@@ -20,49 +27,54 @@ class LagsService {
 
         }
             }
-            catch (FileNotFoundException e)
+            catch (IOException e)
             {
                 System.out.println("FICHIER ORDRES.CSV NON TROUVE. CREATION FICHIER.");
-                WriteOrdres(fileName);
+                writeOrdres(fileName);
             }
         }
 
-//
-//        // écrit le fichier des ordres
-//        void writeOrdres(String nomFich)
-//        {
-//            using (TextWriter writer = File.CreateText(nomFich))
-//            {
-//                foreach (Ordre ordre in ListOrdre)
-//                {
-//                    string[] ligneCSV = new string[4];
-//                    ligneCSV[0] = ordre.id;
-//                    ligneCSV[1] = ordre.debut.ToString();
-//                    ligneCSV[2] = ordre.duree.ToString();
-//                    ligneCSV[3] = ordre.prix.ToString();
-//                    writer.WriteLine(string.Join(";", ligneCSV));
-//                }
-//            }
-//        }
-//
+        // écrit le fichier des ordres
+        void writeOrdres(String nomFich)
+        {
+            List<String> lines = new ArrayList<String>();
+            for(int i=0; i<listOrdre.size(); i++) {
+                Ordre ordre = listOrdre.get(i);
+                String ligneCSV = new String();
+                ligneCSV = ordre.getId() + ";" + Integer.toString(ordre.getDebut()) +";"+Integer.toString(ordre.getDuree())+";"+Double.toString(ordre.prix());
+                lines.add(ligneCSV);
+                }
+            try{
+                Files.write(Paths.get(nomFich), lines,StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND, StandardOpenOption.WRITE);
+            }
+            catch (IOException e)
+            {
+                System.out.println("PROBLEME AVEC FICHIER");
+            }
+        }
+
 
         // affiche la liste des ordres
         public void liste()
         {
-            System.out.println("LISTE DES ORDRES");
-            System.out.format("%8s %8s %5s %13s", "ID", "DEBUT", "DUREE", "PRIX");
-            System.out.format("%8s %8s %5s %13s", "--------", "-------", "-----", "----------");
-            listOrdre = listOrdre.OrderBy(ordre => ordre.debut).ToList();
-            listOrdre.ForEach(AfficherOrdre);
-            System.out.format("%8s %8s %5s %13s", "--------", "-------", "-----", "----------");
+            listOrdre.sort((o1, o2) -> o1.getDebut()-o2.getDebut());
+            System.out.println("LISTE DES ORDRES\n");
+            System.out.format("%8s %8s %5s %13s", "ID", "DEBUT", "DUREE", "PRIX\n");
+            System.out.format("%8s %8s %5s %13s", "--------", "-------", "-----", "----------\n");
+            // listOrdre.ForEach(AfficherOrdre);
+            for(int i=0; i<listOrdre.size(); i++) {
+                Ordre ordre = listOrdre.get(i);
+                afficherOrdre(ordre);
+            }
+            System.out.format("%8s %8s %5s %13s", "--------", "-------", "-----", "----------\n");
         }
-}
 
         public void afficherOrdre(Ordre ordre)
         {
-            System.out.format("%s8 %08d %05d %10.2f", ordre.getId, ordre.getDebut, ordre.getDuree, ordre.getPrix);
+            System.out.format("%s8 %08d %05d %10.2f\n", ordre.getId(), ordre.getDebut(), ordre.getDuree(), ordre.prix());
 
         }
+}
 //        // Ajoute un ordre; le CA est recalculé en conséquence
 //        public void ajouterOrdre()
 //        {
