@@ -61,7 +61,6 @@ class LagsService {
             System.out.println("LISTE DES ORDRES\n");
             System.out.format("%8s %8s %5s %13s", "ID", "DEBUT", "DUREE", "PRIX\n");
             System.out.format("%8s %8s %5s %13s", "--------", "-------", "-----", "----------\n");
-            // listOrdre.ForEach(AfficherOrdre);
             for(int i=0; i<listOrdre.size(); i++) {
                 Ordre ordre = listOrdre.get(i);
                 afficherOrdre(ordre);
@@ -71,25 +70,25 @@ class LagsService {
 
         public void afficherOrdre(Ordre ordre)
         {
-            System.out.format("%s8 %08d %05d %10.2f\n", ordre.getId(), ordre.getDebut(), ordre.getDuree(), ordre.prix());
+            System.out.format("%8s %8d %5d %10.2f\n", ordre.getId(), ordre.getDebut(), ordre.getDuree(), ordre.prix());
 
         }
 }
-//        // Ajoute un ordre; le CA est recalculé en conséquence
-//        public void ajouterOrdre()
-//        {
-//            System.out.println("AJOUTER UN ORDRE");
-//            System.out.println("FORMAT = ID;DEBUT;FIN;PRIX");
-//            String line = Console.ReadLine().ToUpper();
-//            var champs = line.Split(';');
-//            String id = champs[0];
-//            int dep = Int32.Parse(champs[1]);
-//            int dur = Int32.Parse(champs[2]);
-//            double prx = Double.Parse(champs[3]);
-//            Ordre ordre = new Ordre(id, dep, dur, prx);
-//            ListOrdre.Add(ordre);
-//            WriteOrdres("ordres.csv");
-//        }
+        // Ajoute un ordre; le CA est recalculé en conséquence
+        public void ajouterOrdre()
+        {
+            System.out.println("AJOUTER UN ORDRE");
+            System.out.println("FORMAT = ID;DEBUT;FIN;PRIX");
+            String line = Console.ReadLine().ToUpper();
+            var champs = line.Split(';');
+            String id = champs[0];
+            int dep = Int32.Parse(champs[1]);
+            int dur = Int32.Parse(champs[2]);
+            double prx = Double.Parse(champs[3]);
+            Ordre ordre = new Ordre(id, dep, dur, prx);
+            ListOrdre.Add(ordre);
+            WriteOrdres("ordres.csv");
+        }
 //
 //        //public void calculerLeCA()
 //        //{

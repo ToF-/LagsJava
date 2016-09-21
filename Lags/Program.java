@@ -26,6 +26,7 @@ class Program {
                     case 'Q':
                         {
                             flag = true;
+                            break;
                         }
                     case 'L':
                         {
