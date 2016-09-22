@@ -14,7 +14,7 @@ class Program {
             // met la commande à Z
             char commande = 'Z';
             while (commande != 'A' && commande != 'L' && commande != 'S' && commande != 'Q' && commande != 'C') {
-                System.out.print("A)JOUTER UN ORDRE  L)ISTER   C)ALCULER CA  S)UPPRIMER  Q)UITTER");
+                System.out.println("A)JOUTER UN ORDRE  L)ISTER   C)ALCULER CA  S)UPPRIMER  Q)UITTER");
                 try {
                     char keyInfo = (char)System.in.read();
                     commande = Character.toUpperCase(keyInfo);
@@ -35,17 +35,17 @@ class Program {
                         }
                     case 'A':
                         {
-                            //service.AjouterOrdre();
+                            service.ajouterOrdre();
                             break;
                         }
                     case 'S':
                         {
-                            //service.Suppression();
+                            service.suppression();
                             break;
                         }
                     case 'C':
                         {
-                            //service.CalculerLeCA(debug);
+                            service.calculerLeCA(debug);
                             break;
                         }
                 }

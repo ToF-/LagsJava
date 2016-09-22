@@ -1,4 +1,4 @@
-public class Ordre {
+public class Ordre implements Comparable<Ordre> {
     private String id;
     private int debut;
     private int duree;
@@ -26,6 +26,9 @@ public class Ordre {
     // valeur
     public double prix() {
         return this.prix;
+    }
+    public int compareTo(Ordre other) {
+        return this.debut - other.getDebut();
     }
 
 }

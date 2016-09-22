@@ -1,9 +1,7 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.io.IOException;
-import java.util.Collections;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.StandardOpenOption;
@@ -16,7 +14,7 @@ class LagsService {
         {
             try{
 
-            for (String line : Files.readAllLines(Paths.get(fileName))) {
+            for (String line : Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8)) {
                 String[] champs = line.split(";");
                 String chp1 = champs[0];
                 int chp2 = Integer.parseInt(champs[1]);
@@ -57,7 +55,12 @@ class LagsService {
         // affiche la liste des ordres
         public void liste()
         {
-            listOrdre.sort((o1, o2) -> o1.getDebut()-o2.getDebut());
+            Collections.sort(listOrdre, new Comparator<Ordre>() {
+                  @Override
+                     public int compare(Ordre o1, Ordre o2) {
+                                return o1.getDebut() - o2.getDebut(); // use your logic, Luke
+                                   }
+            });
             System.out.println("LISTE DES ORDRES\n");
             System.out.format("%8s %8s %5s %13s", "ID", "DEBUT", "DUREE", "PRIX\n");
             System.out.format("%8s %8s %5s %13s", "--------", "-------", "-----", "----------\n");
@@ -73,68 +76,80 @@ class LagsService {
             System.out.format("%8s %8d %5d %10.2f\n", ordre.getId(), ordre.getDebut(), ordre.getDuree(), ordre.prix());
 
         }
-}
         // Ajoute un ordre; le CA est recalculé en conséquence
         public void ajouterOrdre()
         {
             System.out.println("AJOUTER UN ORDRE");
             System.out.println("FORMAT = ID;DEBUT;FIN;PRIX");
-            String line = Console.ReadLine().ToUpper();
-            var champs = line.Split(';');
-            String id = champs[0];
-            int dep = Int32.Parse(champs[1]);
-            int dur = Int32.Parse(champs[2]);
-            double prx = Double.Parse(champs[3]);
-            Ordre ordre = new Ordre(id, dep, dur, prx);
-            ListOrdre.Add(ordre);
-            WriteOrdres("ordres.csv");
+            String line = System.console().readLine().toUpperCase();
+            String[] champs = line.split(";");
+            String chp1 = champs[0];
+            int chp2 = Integer.parseInt(champs[1]);
+            int champ3 = Integer.parseInt(champs[2]);
+            double chp4 = Double.parseDouble(champs[3]);
+            Ordre ordre = new Ordre(chp1, chp2, champ3, chp4);
+            listOrdre.add(ordre);
+            writeOrdres("ordres.csv");
         }
-//
-//        //public void calculerLeCA()
-//        //{
-//        //    System.out.println("CALCUL CA..");
-//        //    laListe = laListe.OrderBy(ordre => ordre.debut).ToList();
-//        //    double ca = CA(laListe);
-//        //    System.out.println("CA: {0,10:N2}", ca);
-//        //}
-//
-//        private double ca(List<Ordre> ordres, bool debug)
-//        {
-//            // si aucun ordre, job done, TROLOLOLO..
-//            if (ordres.Count() == 0)
-//                return 0.0;
-//            Ordre order = ordres.ElementAt(0);
-//            // attention ne marche pas pour les ordres qui depassent la fin de l'année 
-//            // voir ticket PLAF nO 4807 
-//            List<Ordre> liste = ordres.Where(ordre => ordre.debut >= order.debut + order.duree).ToList();
-//            List<Ordre> liste2 = ordres.GetRange(1, ordres.Count() - 1);
-//            double ca = order.prix + CA(liste, debug);
-//            // Lapin compris?
-//            double ca2 = CA(liste2, debug);
-//            Console.Write(debug ? String.Format("{0,10:N2}\n", Math.Max(ca, ca2)):".");
-//            return Math.Max(ca, ca2); // LOL
-//        }
-//
-//        // MAJ du fichier
-//        public void suppression()
-//        {
-//            System.out.println("SUPPRIMER UN ORDRE");
-//            Console.Write("ID:");
-//            string id = Console.ReadLine().ToUpper();
-//            this.ListOrdre = ListOrdre.Where(ordre => ordre.id != id).ToList();
-//            WriteOrdres("ORDRES.CSV");
-//        }
-//
-//
-//
-//        private void calculerLeCA(bool debug)
-//        {
-//            System.out.println("CALCUL CA..");
-//            ListOrdre = ListOrdre.OrderBy(ordre => ordre.debut).ToList();
-//            double ca = CA(ListOrdre, debug);
-//            System.out.println("CA: {0,10:N2}", ca);
-//        }
-//
-//    }
-//}
-//}
+        // MAJ du fichier
+        public void suppression()
+        {
+            System.out.println("SUPPRIMER UN ORDRE");
+            System.out.println("ID:");
+            String id = System.console().readLine().toUpperCase();
+            for (Iterator<Ordre> iter = listOrdre.listIterator(); iter.hasNext(); ) {
+                    Ordre o = iter.next();
+                        if (o.getId().equals(id)) {
+                                    iter.remove();
+                                        }
+            }
+            writeOrdres("ORDRES.CSV");
+        }
+
+        private double ca(List<Ordre> ordres, boolean debug)
+        {
+            // si aucun ordre, job done, TROLOLOLO..
+            if (ordres.size() == 0)
+                return 0.0;
+            Ordre order = ordres.get(0);
+            // attention ne marche pas pour les ordres qui depassent la fin de l'année 
+            // voir ticket PLAF nO 4807 
+            List<Ordre> liste = new ArrayList<Ordre>();
+            for (Iterator<Ordre> iter = listOrdre.listIterator(); iter.hasNext(); ) {
+                    Ordre o = iter.next();
+                        if (o.getDebut()>=order.getDebut() + order.getDuree()) {
+                                    liste.add(o);
+                                        }
+            }
+            List<Ordre> liste2 = new ArrayList<Ordre>();
+            for(int i=1; i<ordres.size(); i++) {
+                liste2.add(ordres.get(i));
+            }
+            double ca = order.prix()+ ca(liste, debug);
+            // Lapin compris?
+            double ca2 = ca(liste2, debug);
+            if(debug) {
+                System.out.format("%10.2f\n", Math.max(ca, ca2));
+            }
+            else
+                System.out.print(".");
+            return Math.max(ca, ca2); // LOL
+        }
+
+
+
+
+        public void calculerLeCA(boolean debug)
+        {
+            System.out.println("CALCUL CA..");
+            Collections.sort(listOrdre, new Comparator<Ordre>() {
+                  @Override
+                     public int compare(Ordre o1, Ordre o2) {
+                                return o1.getDebut() - o2.getDebut(); // use your logic, Luke
+                                   }
+            });
+            double ca = ca(listOrdre, debug);
+            System.out.format("CA: %10.2f\n", ca);
+        }
+}
+
