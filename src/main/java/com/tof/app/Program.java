@@ -1,3 +1,5 @@
+package com.tof.app;
+
 class Program {
     static final boolean debug = true;
 
