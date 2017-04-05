@@ -1,3 +1,5 @@
+package com.tof.app;
+
 public class Ordre implements Comparable<Ordre> {
     private String id;
     private int debut;
