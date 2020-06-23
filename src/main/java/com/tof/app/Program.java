@@ -8,8 +8,8 @@ class Program {
     // ===================
 
     public static void main(String[] args) {
-        LagsService service = new LagsService();
-        service.getFichierOrder("ORDRES.CSV");
+        LagsService service = new LagsService(new SalesCalculator());
+        service.populateOrderList(Constant.fileName);
         boolean flag = false;
         // tant que ce n'est pas la fin du programme
         while (!flag) {
@@ -32,22 +32,22 @@ class Program {
                         }
                     case 'L':
                         {
-                            service.liste();
+                            service.sortAndDisplayOrderList();
                             break;
                         }
                     case 'A':
                         {
-                            service.ajouterOrdre();
+                            service.addOrderFromTerminal();
                             break;
                         }
                     case 'S':
                         {
-                            service.suppression();
+                            service.removeSpecifiedOrderFromList();
                             break;
                         }
                     case 'C':
                         {
-                            service.calculerLeCA(debug);
+                            service.computeAndDisplaySales(debug);
                             break;
                         }
                 }
